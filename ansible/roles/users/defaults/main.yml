@@ -1,0 +1,5 @@
+---
+users_file: users.yaml
+users_default_groups:
+  - docker
+users_admin_group: admin

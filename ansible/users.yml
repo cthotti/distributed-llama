@@ -1,0 +1,47 @@
+users:
+  - username: yil327
+    name: Yixuan Li
+    authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDFPXIg4gc4B8Pfv6X0o7UkgBs81i3zBcBpWvAr0Jqb8 yixuanli@Yixuans-MacBook-Pro.local
+    password_hash: $6$K5m07UEgZfawlxEU$I63I3x9lTGhA9aJU/AjSukxLVmCcCmNvefHL3USo0mmvR/ruCwIeukv/kHamv5/zSZqlr.BWeV0qreXBCGuwW0
+    admin: true
+
+  - username: srujamdave
+    name: Srujam Dave
+    authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILHk9UcVVYfF/JMpK3J86kYb+MUytVwY4o8thyIiz8// srujam-dave@srujam-dave-ThinkPad-T480s
+    admin: true
+
+  - username: young
+    name: Chanyoung Park
+    authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA93vLHQj+v6dm0UwNRnVfU7W8i4Q0n5OjulYRrNLpCr young@DOSKTEP
+    password_hash: $6$j7Hgy9AllsFgjcpZ$7.Xb75j1a3/VASzqRFUkFtU3VX/9XKhz9ovtvjx/WmQJ0zQG7kmDoa7M/S1jTb05zxqqUR4Ma25e7O8U1l4cL/
+    admin: true
+
+  - username: tom
+    name: Tom Lu
+    authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP9IcXjjTs9ZtIhgcFsBwsJhOCTFqtRBBkGHWPVDHj1h _tom_lu_@Toms-MacBook-Air.local
+    password_hash: $6$wST.HbOokZyehloq$ItIbnVGBdAC4KaP1m1DZADFSpa7cfeieo6c8EO6x/1Hus/pRgZxUfXvhaWmWjDFrLW9.kaePz9LYJ6pM/9gAC1
+    admin: true
+
+  - username: ceci
+    name: Cecilia Li
+    authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINeTHxh3SPCJivfis0wsHkCNgt3W+mEycqUvCV4yF857 jil485@ucsd.edu
+    password_hash: $6$W0Yuw2Gib8fVPY91$vVURK5bLwtMgh2Xy9P8Jem7mEqjMSYzNYILGdADM4uPHOLGZxZn3ZAjFV95ltgpcdsuhjNABKZQSsIrQ2o2mP.
+    admin: true
+
+  - username: chet
+    name: Chetan Thotti
+    authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOzxUageSbJ+XNHvG+8tiFnBmSrB1T/uX3nGK/3GpzNS chetant@Chetans-MacBook-Air.local
+    password_hash: $6$1wdcSQsn0TKJgJ5t$ooSzoB0Nr2wiB0qZlpvNkNaHmKMJG4G4CQHHeyIpljeeAIIFcqnHHxhG.m5a5NLZeVwrEldjl95GfXxiD7CXa/
+    admin: true
+
+  - username: atjon
+    name: Aidan Tjon
+    authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMbg2x7hOpW6uhDVcioEQMxzUYQM9IMfAx0i9Fvf1z7i atjon@Aidans-MacBook-Pro.local
+    admin: true

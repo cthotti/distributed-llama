@@ -1,0 +1,74 @@
+---
+- name: Load users from file
+  ansible.builtin.include_vars:
+    file: "{{ users_file }}"
+    name: user_data
+
+- name: Set default UID base if not provided
+  ansible.builtin.set_fact:
+    users_uid_base: "{{ users_uid_base | default(20000) | int }}"
+
+- name: Ensure admin group exists
+  ansible.builtin.group:
+    name: "{{ users_admin_group }}"
+    state: present
+
+- name: Configure sudoers for admin group
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/admin
+    content: "%{{ users_admin_group }} ALL=(ALL) ALL\n"
+    mode: "0440"
+    validate: /usr/sbin/visudo -cf %s
+
+- name: Ensure per-user primary groups exist with consistent GID
+  ansible.builtin.group:
+    name: "{{ item.username }}"
+    gid: "{{ users_uid_base + idx }}"
+    state: present
+  loop: "{{ user_data.users }}"
+  loop_control:
+    index_var: idx
+
+- name: Create users with consistent UID/GID and shared password hash
+  ansible.builtin.user:
+    name: "{{ item.username }}"
+    comment: "{{ item.name }}"
+    uid: "{{ users_uid_base + idx }}"
+    group: "{{ item.username }}"
+    groups: >-
+      {{
+        users_default_groups
+        + ([users_admin_group] if (item.admin | default(false) | bool) else [])
+      }}
+    append: true
+    state: present
+    create_home: true
+    password: >-
+      {{
+        (item.password_hash
+          | default(user_data.password_hash, true)
+          | default('!', true))
+      }}
+    update_password: always
+  loop: "{{ user_data.users }}"
+  loop_control:
+    index_var: idx
+
+- name: Create .ssh directory for users
+  ansible.builtin.file:
+    path: "/home/{{ item.username }}/.ssh"
+    state: directory
+    owner: "{{ item.username }}"
+    group: "{{ item.username }}"
+    mode: "0700"
+  loop: "{{ user_data.users }}"
+
+- name: Add authorized keys to users
+  ansible.builtin.lineinfile:
+    path: "/home/{{ item.0.username }}/.ssh/authorized_keys"
+    line: "{{ item.1 }}"
+    create: true
+    owner: "{{ item.0.username }}"
+    group: "{{ item.0.username }}"
+    mode: "0600"
+  loop: "{{ user_data.users | subelements('authorized_keys') }}"

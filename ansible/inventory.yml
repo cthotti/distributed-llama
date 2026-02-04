@@ -1,0 +1,28 @@
+rocks:
+  hosts:
+    rock0:
+      ansible_host: 192.168.111.50
+    rock1:
+      ansible_host: 192.168.111.51
+    rock2:
+      ansible_host: 192.168.111.52
+    rock3:
+      ansible_host: 192.168.111.53
+    rock4:
+      ansible_host: 192.168.111.54
+    rock5:
+      ansible_host: 192.168.111.55
+    rock6:
+      ansible_host: 192.168.111.56
+    rock7:
+      ansible_host: 192.168.111.57
+    rock8:
+      ansible_host: 192.168.111.58
+    rock9:
+      ansible_host: 192.168.111.59
+    rock10:
+      ansible_host: 192.168.111.60
+    rock11:
+      ansible_host: 192.168.111.61
+    rock12:
+      ansible_host: 192.168.111.62

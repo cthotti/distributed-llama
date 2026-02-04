@@ -1,0 +1,10 @@
+---
+- name: SBCC Team 1 Rock Pi Cluster
+  hosts: rocks
+  become: true
+
+  roles:
+    - base
+    - docker
+    - users
+    - lmod

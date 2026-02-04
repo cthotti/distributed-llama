@@ -1,0 +1,2 @@
+lmod_site_modulepath: "/opt/modulefiles"
+lmod_create_modulepath_dir: true

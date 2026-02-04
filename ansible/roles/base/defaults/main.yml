@@ -1,0 +1,3 @@
+base_admin_authorized_keys:
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDFPXIg4gc4B8Pfv6X0o7UkgBs81i3zBcBpWvAr0Jqb8 yixuanli@Yixuans-MacBook-Pro.local
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILHk9UcVVYfF/JMpK3J86kYb+MUytVwY4o8thyIiz8// srujam-dave@srujam-dave-ThinkPad-T480s

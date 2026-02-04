@@ -1,0 +1,71 @@
+- name: Set hostname
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Copy journald
+  ansible.builtin.copy:
+    src: files/journald.conf
+    dest: /etc/systemd/journald.conf
+    mode: "0644"
+
+- name: Restart journald
+  ansible.builtin.service:
+    name: systemd-journald
+    enabled: true
+    state: restarted
+
+- name: Copy sshd config
+  ansible.builtin.copy:
+    src: files/sshd_config
+    dest: /etc/ssh/sshd_config
+    mode: "0644"
+
+- name: Restart sshd
+  ansible.builtin.service:
+    name: sshd
+    enabled: true
+    state: restarted
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Basic packages
+  ansible.builtin.apt:
+    name:
+      - build-essential
+      - vim
+      - git
+      - curl
+      - wget
+      - tmux
+      - ca-certificates
+      - cmake
+      - python3
+      - nfs-common
+      - network-manager
+    state: present
+
+- name: Enable and start NetworkManager
+  ansible.builtin.systemd:
+    name: NetworkManager
+    enabled: true
+    state: started
+
+- name: Ensure .ssh directory exists
+  ansible.builtin.file:
+    path: /home/admin/.ssh
+    state: directory
+    owner: admin
+    group: admin
+    mode: "0700"
+
+- name: Add SSH public keys to authorized_keys
+  ansible.builtin.lineinfile:
+    path: /home/admin/.ssh/authorized_keys
+    line: "{{ item }}"
+    create: true
+    owner: admin
+    group: admin
+    mode: "0600"
+  loop: "{{ admin_authorized_keys }}"

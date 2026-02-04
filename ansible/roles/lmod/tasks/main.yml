@@ -1,0 +1,36 @@
+---
+- name: Install Lmod packages
+  ansible.builtin.apt:
+    name: lmod
+    state: present
+    update_cache: true
+  become: true
+
+- name: Create site modulefiles directory
+  ansible.builtin.file:
+    path: "{{ lmod_site_modulepath }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+  when: lmod_create_modulepath_dir
+
+- name: Install MODULEPATH configuration for site modulefiles
+  ansible.builtin.template:
+    src: modulepath.sh.j2
+    dest: /etc/profile.d/10-modulepath.sh
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+
+- name: Sanity check
+  ansible.builtin.shell: |
+    set -euo pipefail
+    bash -lc 'type module && module --version'
+  args:
+    executable: /bin/bash
+  register: _lmod_check
+  changed_when: false
+  become: false
