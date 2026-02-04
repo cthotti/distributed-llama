@@ -40,7 +40,7 @@
         users_default_groups
         + ([users_admin_group] if (item.admin | default(false) | bool) else [])
       }}
-    append: true
+    append: false
     state: present
     create_home: true
     password: >-
