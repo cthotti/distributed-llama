@@ -8,6 +8,20 @@
   ansible.builtin.set_fact:
     users_uid_base: "{{ users_uid_base | default(20000) | int }}"
 
+- name: Get current users in UID range
+  ansible.builtin.getent:
+    database: passwd
+    split: ":"
+
+- name: Rename user if different username exists at same UID position
+  ansible.builtin.include_tasks:
+    file: rename_user.yml
+  loop: "{{ user_data.users }}"
+  loop_control:
+    index_var: idx
+    loop_var: item
+  register: users_renamed
+
 - name: Ensure admin group exists
   ansible.builtin.group:
     name: "{{ users_admin_group }}"
@@ -19,6 +33,29 @@
     content: "%{{ users_admin_group }} ALL=(ALL) ALL\n"
     mode: "0440"
     validate: /usr/sbin/visudo -cf %s
+
+- name: Get current groups
+  ansible.builtin.getent:
+    database: group
+    split: ":"
+
+- name: Rename group if different name exists at same GID
+  ansible.builtin.command:
+    cmd: >-
+      groupmod -n {{ item.username }}
+      {{ (getent_group | dict2items | selectattr('value.1', 'equalto',
+      (users_uid_base + idx) | string) | first | default({})).key }}
+  when:
+    - (getent_group | dict2items | selectattr('value.1', 'equalto',
+      (users_uid_base + idx) | string) | first | default({})).key |
+      default('') != ''
+    - (getent_group | dict2items | selectattr('value.1', 'equalto',
+      (users_uid_base + idx) | string) | first | default({})).key |
+      default('') != item.username
+  loop: "{{ user_data.users }}"
+  loop_control:
+    index_var: idx
+  changed_when: true
 
 - name: Ensure per-user primary groups exist with consistent GID
   ansible.builtin.group:

@@ -1,0 +1,41 @@
+---
+- name: Set up variables for user rename
+  ansible.builtin.set_fact:
+    users_uid: "{{ users_uid_base + idx }}"
+    users_current_user: >-
+      {{ getent_passwd | dict2items
+      | selectattr('value.1', 'equalto',
+        (users_uid_base + idx) | string)
+      | first | default({}) }}
+    users_current_name: >-
+      {{ (getent_passwd | dict2items
+      | selectattr('value.1', 'equalto',
+        (users_uid_base + idx) | string)
+      | first | default({})).key | default('') }}
+
+- name: Rename group for user
+  ansible.builtin.command:
+    cmd: "groupmod -n {{ item.username }} {{ users_current_name }}"
+  when:
+    - users_current_name != ''
+    - users_current_name != item.username
+  changed_when: true
+
+- name: Move home directory to new name
+  ansible.builtin.shell: |
+    if [ -d "/home/{{ users_current_name }}" ]; then
+      mv -p "/home/{{ users_current_name }}" "/home/{{ item.username }}"
+      chown -R {{ item.username }}:{{ item.username }} "/home/{{ item.username }}"
+    fi
+  when:
+    - users_current_name != ''
+    - users_current_name != item.username
+  changed_when: true
+
+- name: Rename user
+  ansible.builtin.command:
+    cmd: "usermod -l {{ item.username }} -d /home/{{ item.username }} {{ users_current_name }}"
+  when:
+    - users_current_name != ''
+    - users_current_name != item.username
+  changed_when: true

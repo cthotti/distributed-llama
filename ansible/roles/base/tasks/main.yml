@@ -68,4 +68,4 @@
     owner: admin
     group: admin
     mode: "0600"
-  loop: "{{ admin_authorized_keys }}"
+  loop: "{{ base_admin_authorized_keys }}"
