@@ -1,0 +1,28 @@
+rocks:
+  hosts:
+    rock0:
+      ansible_host: rock0
+    rock1:
+      ansible_host: rock1
+    rock2:
+      ansible_host: rock2
+    rock3:
+      ansible_host: rock3
+    rock4:
+      ansible_host: rock4
+    rock5:
+      ansible_host: rock5
+    rock6:
+      ansible_host: rock6
+    rock7:
+      ansible_host: rock7
+    rock8:
+      ansible_host: rock8
+    rock9:
+      ansible_host: rock9
+    rock10:
+      ansible_host: rock10
+    rock11:
+      ansible_host: rock11
+    rock12:
+      ansible_host: rock12

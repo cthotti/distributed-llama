@@ -1,3 +1,21 @@
 base_admin_authorized_keys:
   - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDFPXIg4gc4B8Pfv6X0o7UkgBs81i3zBcBpWvAr0Jqb8 yixuanli@Yixuans-MacBook-Pro.local
   - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILHk9UcVVYfF/JMpK3J86kYb+MUytVwY4o8thyIiz8// srujam-dave@srujam-dave-ThinkPad-T480s
+
+base_cluster_hosts:
+  - { ip: "192.168.111.50", name: "rock0" }
+  - { ip: "192.168.111.51", name: "rock1" }
+  - { ip: "192.168.111.52", name: "rock2" }
+  - { ip: "192.168.111.53", name: "rock3" }
+  - { ip: "192.168.111.54", name: "rock4" }
+  - { ip: "192.168.111.55", name: "rock5" }
+  - { ip: "192.168.111.56", name: "rock6" }
+  - { ip: "192.168.111.57", name: "rock7" }
+  - { ip: "192.168.111.58", name: "rock8" }
+  - { ip: "192.168.111.59", name: "rock9" }
+  - { ip: "192.168.111.60", name: "rock10" }
+  - { ip: "192.168.111.61", name: "rock11" }
+  - { ip: "192.168.111.62", name: "rock12" }
+  - { ip: "192.168.111.63", name: "rock13" }
+  - { ip: "192.168.111.64", name: "rock14" }
+  - { ip: "192.168.111.65", name: "rock15" }
