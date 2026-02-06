@@ -45,3 +45,10 @@ users:
     authorized_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMbg2x7hOpW6uhDVcioEQMxzUYQM9IMfAx0i9Fvf1z7i atjon@Aidans-MacBook-Pro.local
     admin: true
+
+  - username: ibrahim
+    name: Ibrahim Altuwaijri
+    authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKyVBzdwG3upKqYelAT7p325Ls7QaP7uABSHbHYW4EJn ialtuwaijri@ucsd.edu
+    password_hash: $6$3QdUIr5PaljehFdY$q/9e7F1fZVmaIeT1mSimsTyVmfUlDjVXKRvT/7mnyytQNqq6kPphZgtK0af7mpFC5Hu2l4nCvYfRd8l/N/vI00
+    admin: true
