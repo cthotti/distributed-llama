@@ -3,6 +3,7 @@ users:
     name: Yixuan Li
     authorized_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDFPXIg4gc4B8Pfv6X0o7UkgBs81i3zBcBpWvAr0Jqb8 yixuanli@Yixuans-MacBook-Pro.local
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIElAsi35wm1MvISe2Vv0xwQ+PscNi95ZD99as+XydI1E yxli@greg
     password_hash: $6$K5m07UEgZfawlxEU$I63I3x9lTGhA9aJU/AjSukxLVmCcCmNvefHL3USo0mmvR/ruCwIeukv/kHamv5/zSZqlr.BWeV0qreXBCGuwW0
     admin: true
 
