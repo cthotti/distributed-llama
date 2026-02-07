@@ -5,6 +5,6 @@
 
   roles:
     - base
-    - docker
-    - users
-    - lmod
+    # - docker
+    # - users
+    # - lmod

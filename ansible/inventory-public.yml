@@ -26,3 +26,9 @@ rocks:
       ansible_host: rock11
     rock12:
       ansible_host: rock12
+    rock13:
+      ansible_host: rock13
+    rock14:
+      ansible_host: rock14
+    rock15:
+      ansible_host: rock15

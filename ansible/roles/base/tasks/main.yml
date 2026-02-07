@@ -1,3 +1,16 @@
+- name: Add SSH public keys to authorized_keys
+  ansible.builtin.lineinfile:
+    path: /home/admin/.ssh/authorized_keys
+    line: "{{ item }}"
+    create: true
+    owner: admin
+    group: admin
+    mode: "0600"
+  loop: "{{ base_admin_authorized_keys }}"
+
+- name: Run hosts tasks
+  ansible.builtin.include_tasks: hosts.yml
+
 - name: Copy journald
   ansible.builtin.copy:
     src: files/journald.conf
@@ -55,16 +68,3 @@
     owner: admin
     group: admin
     mode: "0700"
-
-- name: Add SSH public keys to authorized_keys
-  ansible.builtin.lineinfile:
-    path: /home/admin/.ssh/authorized_keys
-    line: "{{ item }}"
-    create: true
-    owner: admin
-    group: admin
-    mode: "0600"
-  loop: "{{ base_admin_authorized_keys }}"
-
-- name: Run hosts tasks
-  ansible.builtin.include_tasks: hosts.yml
