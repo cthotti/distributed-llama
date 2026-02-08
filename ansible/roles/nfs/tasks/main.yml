@@ -1,0 +1,74 @@
+---
+# ---- Server (rock0) ----
+- name: Install NFS server packages
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    name: "{{ nfs_server_packages }}"
+    state: present
+  when: inventory_hostname == nfs_host_name
+
+- name: Configure NFS exports
+  become: true
+  ansible.builtin.blockinfile:
+    path: /etc/exports
+    marker: "# {mark} ANSIBLE SPACK EXPORTS"
+    block: |
+      {{ nfs_spack_backing_dir }} {{ nfs_export_subnet }}({{ nfs_export_options_ro }},fsid=10)
+      {{ nfs_modulefiles_backing_dir }} {{ nfs_export_subnet }}({{ nfs_export_options_ro }},fsid=11)
+  notify: Reload NFS exports
+  when: inventory_hostname == nfs_host_name
+
+- name: Ensure NFS server is running
+  become: true
+  ansible.builtin.service:
+    name: nfs-server
+    state: started
+    enabled: true
+  when: inventory_hostname == nfs_host_name
+
+- name: Flush NFS handlers on server
+  ansible.builtin.meta: flush_handlers
+  when: inventory_hostname == nfs_host_name
+
+# ---- Clients (rock1-rock15) ----
+- name: Install NFS client packages
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    name: "{{ nfs_client_packages }}"
+    state: present
+  when: inventory_hostname != nfs_host_name
+
+- name: Ensure mount points exist
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ nfs_spack_prefix }}"
+    - "{{ nfs_modulefiles_dir }}"
+  when:
+    - inventory_hostname != nfs_host_name
+    - ansible_mounts | selectattr("mount","equalto", item) | list | length == 0
+
+- name: Mount /opt/spack from NFS
+  become: true
+  ansible.posix.mount:
+    path: "{{ nfs_spack_prefix }}"
+    src: "{{ nfs_host_name }}:{{ nfs_spack_backing_dir }}"
+    fstype: nfs4
+    opts: "{{ nfs_mount_opts }}"
+    state: mounted
+  when: inventory_hostname != nfs_host_name
+
+- name: Mount /opt/modulefiles from NFS
+  become: true
+  ansible.posix.mount:
+    path: "{{ nfs_modulefiles_dir }}"
+    src: "{{ nfs_host_name }}:{{ nfs_modulefiles_backing_dir }}"
+    fstype: nfs4
+    opts: "{{ nfs_mount_opts }}"
+    state: mounted
+  when: inventory_hostname != nfs_host_name

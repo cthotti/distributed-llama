@@ -2,8 +2,12 @@
 - name: SBCC Team 1 Rock Pi Cluster
   hosts: rocks
   become: true
+  vars:
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
   roles:
     - base
     - docker
     - users
     - lmod
+    - nfs
+    - spack

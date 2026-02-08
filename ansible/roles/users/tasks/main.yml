@@ -20,6 +20,20 @@
     mode: "0440"
     validate: /usr/sbin/visudo -cf %s
 
+- name: Ensure spackadm group exists
+  ansible.builtin.group:
+    name: spackadm
+    state: present
+
+- name: Ensure spack user exists
+  ansible.builtin.user:
+    name: spack
+    uid: 2000
+    group: spackadm
+    shell: /usr/sbin/nologin
+    create_home: false
+    state: present
+
 - name: Get current groups
   ansible.builtin.getent:
     database: group

@@ -1,0 +1,23 @@
+---
+nfs_host_name: rock0
+
+# Backing dirs on host (export these)
+nfs_spack_backing_dir: /mnt/nvme/opt/spack
+nfs_modulefiles_backing_dir: /mnt/nvme/opt/modulefiles
+
+# Mount points on all nodes
+nfs_spack_prefix: /opt/spack
+nfs_modulefiles_dir: /opt/modulefiles
+
+# Network/export policy
+nfs_export_subnet: "192.168.111.0/24"
+nfs_export_options_ro: "ro,sync,no_subtree_check"
+
+# Client mount options
+nfs_mount_opts: "ro,vers=4.1,proto=tcp,_netdev"
+
+# Packages
+nfs_server_packages:
+  - nfs-kernel-server
+nfs_client_packages:
+  - nfs-common

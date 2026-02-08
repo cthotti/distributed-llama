@@ -1,0 +1,52 @@
+---
+spack_host_name: rock0
+
+spack_user: spack
+spack_group: spackadm
+
+spack_prefix: /opt/spack
+spack_modulefiles_dir: /opt/modulefiles
+
+# Spack checkout
+spack_git_repo: https://github.com/spack/spack.git
+spack_git_version: v1.1.1
+spack_src_dir: /opt/spack/spack-src
+
+# NVMe build/cache dirs (host only)
+spack_stage_dir: /mnt/nvme/spack-stage
+spack_source_cache: /mnt/nvme/spack-cache/source
+spack_misc_cache: /mnt/nvme/spack-cache/misc
+
+# Packages
+spack_apt_common:
+  - lmod
+  - tcl
+
+spack_apt_spack_build_host:
+  - build-essential
+  - gfortran
+  - git
+  - curl
+  - wget
+  - ca-certificates
+  - python3
+  - python3-venv
+  - python3-pip
+  - python3-setuptools
+  - xz-utils
+  - bzip2
+  - gzip
+  - unzip
+  - zip
+  - tar
+  - patch
+  - file
+  - pkg-config
+
+# Spack specs to install (host only)
+spack_specs:
+  - gcc@10.5.0
+  - gcc@12.4.0
+  - cmake@3.28.3
+  - openmpi@4.1.6 %gcc@10.5.0
+  - openmpi@4.1.6 %gcc@12.4.0

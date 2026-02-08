@@ -24,13 +24,3 @@
     group: root
     mode: "0644"
   become: true
-
-- name: Sanity check
-  ansible.builtin.shell: |
-    set -euo pipefail
-    bash -lc 'type module && module --version'
-  args:
-    executable: /bin/bash
-  register: _lmod_check
-  changed_when: false
-  become: false

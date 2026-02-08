@@ -1,0 +1,195 @@
+---
+# -------------------------
+# all nodes
+# -------------------------
+- name: Install common packages
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    name: "{{ spack_apt_common }}"
+    state: present
+
+- name: Ensure MODULEPATH includes shared modulefiles
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/profile.d/cluster-modulepath.sh
+    mode: "0644"
+    content: |
+      # Shared Lmod module tree
+      export MODULEPATH="{{ spack_modulefiles_dir }}:${MODULEPATH}"
+
+# -------------------------
+# rock0 only
+# -------------------------
+- name: Install Spack build dependencies
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    name: "{{ spack_apt_spack_build_host }}"
+    state: present
+  when: inventory_hostname == spack_host_name
+
+- name: Fail fast if expected bind-mounted paths are missing
+  become: true
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  register: spack_paths
+  loop:
+    - "{{ spack_prefix }}"
+    - "{{ spack_modulefiles_dir }}"
+    - /mnt/nvme
+  when: inventory_hostname == spack_host_name
+
+- name: Assert spack_prefix and spack_modulefiles_dir exist
+  become: true
+  ansible.builtin.assert:
+    that:
+      - "spack_paths.results[0].stat.exists"
+      - "spack_paths.results[1].stat.exists"
+      - "spack_paths.results[2].stat.exists"
+    fail_msg: "Missing /opt/spack, /opt/modulefiles, or /mnt/nvme on host. Fix mounts/binds first."
+  when: inventory_hostname == spack_host_name
+
+- name: Ensure /opt/spack and /opt/modulefiles ownership + perms
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ spack_user }}"
+    group: "{{ spack_group }}"
+    mode: "2775"
+  loop:
+    - "{{ spack_prefix }}"
+    - "{{ spack_modulefiles_dir }}"
+  when: inventory_hostname == spack_host_name
+
+- name: Ensure Spack stage/cache dirs exist on NVMe
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ spack_user }}"
+    group: "{{ spack_group }}"
+    mode: "2775"
+  loop:
+    - "{{ spack_stage_dir }}"
+    - "{{ spack_source_cache }}"
+    - "{{ spack_misc_cache }}"
+  when: inventory_hostname == spack_host_name
+
+- name: Mark spack repo directory as safe for root git # noqa: command-instead-of-module
+  become: true
+  ansible.builtin.command: "git config --global --add safe.directory {{ spack_src_dir }}"
+  changed_when: false
+  when: inventory_hostname == spack_host_name
+
+- name: Clone/Update Spack
+  become: true
+  ansible.builtin.git:
+    repo: "{{ spack_git_repo }}"
+    dest: "{{ spack_src_dir }}"
+    version: "{{ spack_git_version }}"
+    update: true
+    force: true
+  when: inventory_hostname == spack_host_name
+
+- name: Ensure spack_src_dir owned by spack
+  become: true
+  ansible.builtin.file:
+    path: "{{ spack_src_dir }}"
+    state: directory
+    owner: "{{ spack_user }}"
+    group: "{{ spack_group }}"
+    recurse: true
+  when: inventory_hostname == spack_host_name
+
+- name: Write Spack site config.yaml
+  become: true
+  ansible.builtin.copy:
+    dest: "{{ spack_src_dir }}/etc/spack/config.yaml"
+    mode: "0644"
+    owner: "{{ spack_user }}"
+    group: "{{ spack_group }}"
+    content: |
+      config:
+        install_tree:
+          root: {{ spack_prefix }}
+        build_stage:
+          - {{ spack_stage_dir }}
+        source_cache: {{ spack_source_cache }}
+        misc_cache: {{ spack_misc_cache }}
+  when: inventory_hostname == spack_host_name
+
+- name: Write Spack site modules.yaml
+  become: true
+  ansible.builtin.copy:
+    dest: "{{ spack_src_dir }}/etc/spack/modules.yaml"
+    mode: "0644"
+    owner: "{{ spack_user }}"
+    group: "{{ spack_group }}"
+    content: |
+      modules:
+        default:
+          roots:
+            lmod: /opt/modulefiles
+          arch_folder: false
+          enable:
+            - lmod
+          lmod:
+            all:
+              autoload: direct
+            projections:
+              all: '{name}/{version}'
+            hash_length: 0
+  when: inventory_hostname == spack_host_name
+
+- name: Spack compiler find
+  become: true
+  ansible.builtin.shell: |
+    bash -lc '. {{ spack_src_dir }}/share/spack/setup-env.sh && spack compiler find'
+  environment:
+    HOME: /tmp
+  changed_when: false
+  when: inventory_hostname == spack_host_name
+
+- name: Install Spack specs if missing
+  become: true
+  ansible.builtin.shell: |
+    bash -lc '
+      set -euo pipefail
+      . {{ spack_src_dir }}/share/spack/setup-env.sh
+      if spack find -q "{{ item }}"; then
+        echo "Already installed: {{ item }}"
+      else
+        spack install "{{ item }}"
+        echo "Installed: {{ item }}"
+      fi
+    '
+  args:
+    executable: /bin/bash
+  register: spack_install_results
+  changed_when: "'Installed:' in spack_install_results.stdout"
+  loop: "{{ spack_specs }}"
+  when: inventory_hostname == spack_host_name
+
+- name: Spack compiler find after GCC installs
+  become: true
+  ansible.builtin.shell: |
+    bash -lc '. {{ spack_src_dir }}/share/spack/setup-env.sh && spack compiler find'
+  args:
+    executable: /bin/bash
+  changed_when: false
+  when: inventory_hostname == spack_host_name
+
+- name: Refresh Lmod modulefiles
+  become: true
+  ansible.builtin.shell: |
+    bash -lc '
+      set -euo pipefail
+      . {{ spack_src_dir }}/share/spack/setup-env.sh
+      spack module lmod refresh --delete-tree -y
+    '
+  args:
+    executable: /bin/bash
+  when: inventory_hostname == spack_host_name
+  changed_when: false
