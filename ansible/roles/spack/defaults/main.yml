@@ -17,6 +17,8 @@ spack_stage_dir: /mnt/nvme/spack-stage
 spack_source_cache: /mnt/nvme/spack-cache/source
 spack_misc_cache: /mnt/nvme/spack-cache/misc
 
+spack_build_jobs: 8
+
 # Packages
 spack_apt_common:
   - lmod
@@ -45,8 +47,4 @@ spack_apt_spack_build_host:
 
 # Spack specs to install (host only)
 spack_specs:
-  - gcc@10.5.0
-  - gcc@12.4.0
-  - cmake@3.28.3
-  - openmpi@4.1.6 %gcc@10.5.0
-  - openmpi@4.1.6 %gcc@12.4.0
+  - openmpi@4.1.6 %gcc@14.2.0
