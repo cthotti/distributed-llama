@@ -83,6 +83,13 @@
   changed_when: false
   when: inventory_hostname == spack_host_name
 
+- name: Stat spack src dir
+  become: true
+  ansible.builtin.stat:
+    path: "{{ spack_src_dir }}"
+  register: spack_src_stat
+  when: inventory_hostname == spack_host_name
+
 - name: Clone/Update Spack
   become: true
   ansible.builtin.git:
@@ -91,7 +98,9 @@
     version: "{{ spack_git_version }}"
     update: true
     force: true
-  when: inventory_hostname == spack_host_name
+  when:
+    - inventory_hostname == spack_host_name
+    - not spack_src_stat.stat.exists
 
 - name: Ensure spack_src_dir owned by spack
   become: true
@@ -102,6 +111,7 @@
     group: "{{ spack_group }}"
     recurse: true
   when: inventory_hostname == spack_host_name
+
 
 - name: Write Spack site config.yaml
   become: true
