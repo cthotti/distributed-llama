@@ -9,5 +9,5 @@
     # - docker
     # - users
     # - lmod
-    - nfs
-    # - spack
+    # - nfs
+     - spack
