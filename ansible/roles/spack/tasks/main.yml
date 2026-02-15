@@ -198,7 +198,7 @@
     bash -lc '
       set -euo pipefail
       . {{ spack_src_dir }}/share/spack/setup-env.sh
-      spack module lmod refresh --delete-tree -y
+      spack module lmod refresh -y
     '
   args:
     executable: /bin/bash
