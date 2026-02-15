@@ -5,9 +5,9 @@
   vars:
     ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
   roles:
-    - base
-    - docker
-    - users
-    - lmod
+    # - base
+    # - docker
+    # - users
+    # - lmod
     - nfs
-    - spack
+    # - spack

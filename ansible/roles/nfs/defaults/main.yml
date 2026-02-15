@@ -4,10 +4,12 @@ nfs_host_name: rock0
 # Backing dirs on host (export these)
 nfs_spack_backing_dir: /mnt/nvme/opt/spack
 nfs_modulefiles_backing_dir: /mnt/nvme/opt/modulefiles
+nfs_apps_backing_dir: /mnt/nvme/apps
 
 # Mount points on all nodes
 nfs_spack_prefix: /opt/spack
 nfs_modulefiles_dir: /opt/modulefiles
+nfs_apps_dir: /apps
 
 # Network/export policy
 nfs_export_subnet: "192.168.111.0/24"

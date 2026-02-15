@@ -1,5 +1,16 @@
 ---
 # ---- Server (rock0) ----
+- name: Ensure backing dirs exist
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ nfs_spack_backing_dir }}"
+    - "{{ nfs_modulefiles_backing_dir }}"
+    - "{{ nfs_apps_backing_dir }}"
+
 - name: Install NFS server packages
   become: true
   ansible.builtin.apt:
@@ -16,6 +27,7 @@
     block: |
       {{ nfs_spack_backing_dir }} {{ nfs_export_subnet }}({{ nfs_export_options_ro }},fsid=10)
       {{ nfs_modulefiles_backing_dir }} {{ nfs_export_subnet }}({{ nfs_export_options_ro }},fsid=11)
+      {{ nfs_apps_backing_dir }} {{ nfs_export_subnet }}({{ nfs_export_options_ro }},fsid=12)
   notify: Reload NFS exports
   when: inventory_hostname == nfs_host_name
 
@@ -49,26 +61,54 @@
   loop:
     - "{{ nfs_spack_prefix }}"
     - "{{ nfs_modulefiles_dir }}"
+    - "{{ nfs_apps_dir }}"
   when:
     - inventory_hostname != nfs_host_name
     - ansible_mounts | selectattr("mount","equalto", item) | list | length == 0
 
-- name: Mount /opt/spack from NFS
+- name: Mount NFS shares
   become: true
   ansible.posix.mount:
-    path: "{{ nfs_spack_prefix }}"
-    src: "{{ nfs_host_name }}:{{ nfs_spack_backing_dir }}"
+    path: "{{ item.path }}"
+    src: "{{ nfs_host_name }}:{{ item.src }}"
     fstype: nfs4
     opts: "{{ nfs_mount_opts }}"
     state: mounted
+  loop:
+    - path: "{{ nfs_spack_prefix }}"
+      src: "{{ nfs_spack_backing_dir }}"
+    - path: "{{ nfs_modulefiles_dir }}"
+      src: "{{ nfs_modulefiles_backing_dir }}"
+    - path: "{{ nfs_apps_dir }}"
+      src: "{{ nfs_apps_backing_dir }}"
   when: inventory_hostname != nfs_host_name
 
-- name: Mount /opt/modulefiles from NFS
+- name: Update /apps permissions
   become: true
-  ansible.posix.mount:
-    path: "{{ nfs_modulefiles_dir }}"
-    src: "{{ nfs_host_name }}:{{ nfs_modulefiles_backing_dir }}"
-    fstype: nfs4
-    opts: "{{ nfs_mount_opts }}"
-    state: mounted
-  when: inventory_hostname != nfs_host_name
+  ansible.builtin.file:
+    path: "{{ nfs_apps_backing_dir }}"
+    owner: root
+    group: admin
+    mode: "2775"
+    recurse: true
+  when: inventory_hostname == nfs_host_name
+
+- name: Install ACL tools on NFS server
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    name: acl
+    state: present
+  when: inventory_hostname == nfs_host_name
+
+- name: Ensure admin group can always read/write /apps
+  become: true
+  ansible.posix.acl:
+    path: "{{ nfs_apps_backing_dir }}"
+    entity: admin
+    etype: group
+    permissions: rwX
+    default: true
+    recursive: true
+    state: present
+  when: inventory_hostname == nfs_host_name
