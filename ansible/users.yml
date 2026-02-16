@@ -11,6 +11,7 @@ users:
     name: Srujam Dave
     authorized_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILHk9UcVVYfF/JMpK3J86kYb+MUytVwY4o8thyIiz8// srujam-dave@srujam-dave-ThinkPad-T480s
+    password_hash: $6$cIOddWOZ9tGlMjB.$jzNjNmpmN97lmM2NrfPZbpgb7cDLUr3CCJIer80WK62fkjHsZYIYhqY9n26AUyGRX.LNTf3KxXvS/rz54sM86/
     admin: true
 
   - username: young
@@ -45,6 +46,7 @@ users:
     name: Aidan Tjon
     authorized_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMbg2x7hOpW6uhDVcioEQMxzUYQM9IMfAx0i9Fvf1z7i atjon@Aidans-MacBook-Pro.local
+    password_hash: $6$fp2SAgdCKvw.rZQB$793V71eCCK0XWQ0Jxw5gG9sMNlJN743nvcHAgssQtYw90ki1FHqnQaMQCoIEcW20QzZ4nGXYjTCf..Cp8sOeg1
     admin: true
 
   - username: ibrahim
