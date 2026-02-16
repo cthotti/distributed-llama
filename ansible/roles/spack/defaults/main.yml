@@ -48,4 +48,6 @@ spack_apt_spack_build_host:
 # Spack specs to install (host only)
 spack_specs:
   - openmpi@4.1.6 orterunprefix=true ~internal-pmix %gcc@14.2.0 ^pmix@4.2.2
-  - openblas threads=openmp %gcc@14.2.0 
+  - openblas threads=openmp %gcc@14.2.0
+  - boost %gcc@14.2.0
+  - eigen %gcc@14.2.0

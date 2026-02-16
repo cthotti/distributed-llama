@@ -7,7 +7,7 @@
   roles:
     # - base
     # - docker
-    # - users
+    - users
     # - lmod
     # - nfs
-     - spack
+    - spack

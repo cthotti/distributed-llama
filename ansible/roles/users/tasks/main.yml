@@ -73,6 +73,14 @@
   loop_control:
     index_var: idx
 
+- name: Set permissions for user home directories
+  ansible.builtin.file:
+    path: "/home/{{ item.username }}"
+    owner: "{{ item.username }}"
+    group: "{{ item.username }}"
+    mode: "0755"
+  loop: "{{ user_data.users }}"
+
 - name: Create .ssh directory for users
   ansible.builtin.file:
     path: "/home/{{ item.username }}/.ssh"
