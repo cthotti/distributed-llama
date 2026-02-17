@@ -10,7 +10,7 @@ users:
   - username: srujamdave
     name: Srujam Dave
     authorized_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILHk9UcVVYfF/JMpK3J86kYb+MUytVwY4o8thyIiz8// srujam-dave@srujam-dave-ThinkPad-T480s
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPB0NWoPOJT9EwY23pLYkopA5rGJh2Hdo55NTaSstYwT srujam-dave@srujam-dave-ThinkPad-T480s
     password_hash: $6$cIOddWOZ9tGlMjB.$jzNjNmpmN97lmM2NrfPZbpgb7cDLUr3CCJIer80WK62fkjHsZYIYhqY9n26AUyGRX.LNTf3KxXvS/rz54sM86/
     admin: true
 
