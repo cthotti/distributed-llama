@@ -1,0 +1,17 @@
+# {{ ansible_managed }}
+# dllama worker systemd user service template.
+# Enable an instance with: systemctl --user enable --now dllama-worker@<port>.service
+[Unit]
+Description=dllama worker on port %i
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/{{ dllama_repo_dir_name }}
+ExecStart=%h/{{ dllama_repo_dir_name }}/dllama worker --port %i --nthreads 8
+Restart=on-failure
+RestartSec=1
+
+[Install]
+WantedBy=default.target

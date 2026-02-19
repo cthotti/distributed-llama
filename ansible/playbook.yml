@@ -11,5 +11,6 @@
     # - lmod
     # - nfs
     # - slurm
-    - vulkan
+    # - vulkan
     # - spack
+    - dllama

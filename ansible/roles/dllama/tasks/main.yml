@@ -1,0 +1,45 @@
+---
+# ── A) Install build dependencies ────────────────────────────────────────────
+- name: Install dllama build packages
+  ansible.builtin.apt:
+    name: "{{ dllama_build_packages }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+  when: dllama_install_build_deps
+
+# ── B) Enable linger for each user ──────────────────────────────────────────
+- name: Enable loginctl linger for dllama users
+  ansible.builtin.command:
+    cmd: "loginctl enable-linger {{ item }}"
+    creates: "/var/lib/systemd/linger/{{ item }}"
+  loop: "{{ dllama_users }}"
+  become: true
+  when: dllama_enable_linger
+
+# ── C) Ensure systemd user directory exists for each user ────────────────────
+- name: Create systemd user unit directory for dllama users
+  ansible.builtin.file:
+    path: "/home/{{ item }}/{{ dllama_user_systemd_dir }}"
+    state: directory
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: "0755"
+  loop: "{{ dllama_users }}"
+  become: true
+
+# ── D) Install dllama-worker@ service template for each user ────────────────
+- name: Install dllama-worker@ systemd user service template
+  ansible.builtin.template:
+    src: "dllama-worker@.service.j2"
+    dest: "/home/{{ item }}/{{ dllama_user_systemd_dir }}/{{ dllama_service_name }}"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: "0644"
+  loop: "{{ dllama_users }}"
+  become: true
+
+# NOTE: We intentionally do NOT run `systemctl --user daemon-reload` here.
+# The user's D-Bus / XDG_RUNTIME_DIR may not exist during an Ansible run.
+# User-level scripts will handle daemon-reload after login.
