@@ -2,7 +2,13 @@
 vulkan_packages:
   - libvulkan1
   - mesa-vulkan-drivers
+  - libgl1-mesa-dri
+  - libegl-mesa0
+  - libgbm1
+  - mesa-libgallium
   - vulkan-tools
+  - libvulkan-dev
+  - glslc
 
 vulkan_update_cache: true
 vulkan_apt_cache_valid_time: 3600
@@ -10,3 +16,7 @@ vulkan_apt_cache_valid_time: 3600
 vulkan_icd_dir: /usr/share/vulkan/icd.d
 vulkan_override_icd_filenames: ""
 vulkan_layer_path: ""
+
+vulkan_apt_default_release: "trixie-backports"
+
+vulkan_vk_icd_filenames: "/usr/share/vulkan/icd.d/panfrost_icd.json"

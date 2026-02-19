@@ -1,20 +1,24 @@
----
-# Refresh apt metadata so package install uses current repository indexes
-# Ansible apt module handles cache update idempotently
 - name: Refresh apt package metadata
   ansible.builtin.apt:
     update_cache: true
-  when:
-    - vulkan_update_cache
+    cache_valid_time: "{{ vulkan_apt_cache_valid_time | default(3600) }}"
+  when: vulkan_update_cache | default(true)
 
-# Install Vulkan user-space runtime + Mesa Vulkan driver packages
-- name: Install Vulkan runtime and driver packages
+- name: Install Vulkan/Mesa packages (from backports)
   ansible.builtin.apt:
     name: "{{ vulkan_packages }}"
     state: present
+    default_release: "{{ vulkan_apt_default_release | default(omit) }}"
 
-# Look for Vulkan ICD JSON files in /usr/share/vulkan/icd.d
-# Ansible find scans the directory and stores results in vulkan_icd_files
+- name: Set VK_ICD_FILENAMES for all shells
+  ansible.builtin.copy:
+    dest: /etc/profile.d/vulkan_icd.sh
+    mode: "0644"
+    content: |
+      # Managed by Ansible
+      export VK_ICD_FILENAMES="{{ vulkan_vk_icd_filenames }}"
+  when: (vulkan_vk_icd_filenames | default("")) | length > 0
+
 - name: Discover Vulkan ICD files
   ansible.builtin.find:
     paths: "{{ vulkan_icd_dir }}"
@@ -22,22 +26,10 @@
     patterns: "*.json"
   register: vulkan_icd_files
 
-# Require at least one ICD JSON so Vulkan loader can find a driver
-# Ansible assert fails if vulkan_icd_files.matched is zero
 - name: Verify at least one Vulkan ICD is present
   ansible.builtin.assert:
     that:
       - vulkan_icd_files.matched | int > 0
     fail_msg: >-
       No Vulkan ICD JSON files found in {{ vulkan_icd_dir }}.
-      Check that mesa-vulkan-drivers installed correctly for this ARM image.
-
-# Write /etc/profile.d/20-vulkan.sh so shells can export VK_* Vulkan env vars
-# Ansible template renders from vulkan.sh.j2 and only changes the file when content changes
-- name: Install Vulkan environment profile
-  ansible.builtin.template:
-    src: vulkan.sh.j2
-    dest: /etc/profile.d/20-vulkan.sh
-    owner: root
-    group: root
-    mode: "0644"
+      Check that mesa-vulkan-drivers installed correctly for this image.
