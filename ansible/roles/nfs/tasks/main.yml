@@ -13,7 +13,7 @@
 
 - name: Install NFS server packages
   become: true
-  ansible.builtin.apt:
+  ansible.builtin.dnf:
     update_cache: true
     name: "{{ nfs_server_packages }}"
     state: present
@@ -46,7 +46,7 @@
 # ---- Clients (rock1-rock15) ----
 - name: Install NFS client packages
   become: true
-  ansible.builtin.apt:
+  ansible.builtin.dnf:
     update_cache: true
     name: "{{ nfs_client_packages }}"
     state: present

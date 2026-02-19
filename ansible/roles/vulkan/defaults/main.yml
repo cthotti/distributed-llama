@@ -1,0 +1,40 @@
+---
+# This role supports ARM hosts that use apt or dnf.
+vulkan_supported_architectures:
+  - aarch64
+  - arm64
+  - armv7l
+
+# Supported package managers for this role.
+vulkan_supported_pkg_managers:
+  - apt
+  - dnf
+  - dnf5
+
+# ARM Vulkan runtime + driver packages for apt-based systems.
+vulkan_packages_apt:
+  - libvulkan1
+  - mesa-vulkan-drivers
+  - vulkan-tools
+
+# ARM Vulkan runtime + driver packages for dnf-based systems.
+vulkan_packages_dnf:
+  - vulkan-loader
+  - mesa-vulkan-drivers
+  - vulkan-tools
+
+vulkan_update_cache: true
+vulkan_apt_cache_valid_time: 3600
+
+vulkan_icd_dir: /usr/share/vulkan/icd.d
+vulkan_override_icd_filenames: ""
+vulkan_layer_path: ""
+
+# Optional user/group setup for GPU device access.
+vulkan_gpu_access_groups:
+  - render
+  - video
+vulkan_gpu_users: []
+
+# Optional post-install validation.
+vulkan_run_smoke_test: false

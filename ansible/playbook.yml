@@ -4,10 +4,14 @@
   become: true
   vars:
     ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+    # vulkan_gpu_users:
+    #   - atjon
   roles:
-    - base
-    - docker
-    - users
-    - lmod
-    - nfs
-    - spack
+    # - base
+    # - docker
+    # - users
+    # - lmod
+    # - nfs
+    # - slurm
+    - vulkan
+    # - spack

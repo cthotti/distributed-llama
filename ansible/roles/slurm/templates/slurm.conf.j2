@@ -1,0 +1,37 @@
+# Managed by Ansible.
+ClusterName={{ slurm_cluster_name }}
+SlurmctldHost={{ slurm_controller_host }}
+AuthType=auth/munge
+CryptoType=crypto/munge
+MpiDefault=none
+ProctrackType=proctrack/linuxproc
+ReturnToService=2
+SlurmctldPidFile=/run/slurmctld.pid
+SlurmctldPort={{ slurmctld_port }}
+SlurmdPidFile=/run/slurmd.pid
+SlurmdPort={{ slurmd_port }}
+SlurmdSpoolDir={{ slurm_slurmd_spool_dir }}
+SlurmUser={{ slurm_user }}
+StateSaveLocation={{ slurm_state_save_location }}
+SwitchType=switch/none
+TaskPlugin=task/affinity
+SchedulerType=sched/backfill
+SelectType=select/cons_tres
+SelectTypeParameters=CR_Core
+AccountingStorageType=accounting_storage/none
+JobCompType=jobcomp/none
+
+{% set slurm_nodes = groups[slurm_inventory_group] | sort %}
+{% if slurm_include_controller_in_partition %}
+{% set partition_nodes = slurm_nodes %}
+{% else %}
+{% set partition_nodes = slurm_nodes | reject('equalto', slurm_controller_host) | list %}
+{% endif %}
+{% for node in slurm_nodes %}
+{% set facts = hostvars[node].ansible_facts | default({}) %}
+{% set node_cpus = facts.processor_vcpus | default(hostvars[node].ansible_processor_vcpus | default(slurm_default_cpus)) %}
+{% set node_mem_mb = facts.memtotal_mb | default(hostvars[node].ansible_memtotal_mb | default(slurm_default_mem_mb)) %}
+NodeName={{ node }} CPUs={{ node_cpus | int }} RealMemory={{ ((node_mem_mb | int) * slurm_real_memory_pct / 100) | int }} State=UNKNOWN
+{% endfor %}
+
+PartitionName={{ slurm_partition_name }} Nodes={{ partition_nodes | join(',') }} Default=YES MaxTime={{ slurm_partition_max_time }} State=UP

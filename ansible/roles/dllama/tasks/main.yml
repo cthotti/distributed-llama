@@ -1,6 +1,6 @@
 ---
 - name: Install required packages
-  ansible.builtin.apt:
+  ansible.builtin.dnf:
     name:
       - git
       - build-essential

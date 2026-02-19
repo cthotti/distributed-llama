@@ -1,0 +1,20 @@
+---
+- name: Restart munge
+  become: true
+  ansible.builtin.service:
+    name: munge
+    state: restarted
+
+- name: Restart slurmctld
+  become: true
+  ansible.builtin.service:
+    name: slurmctld
+    state: restarted
+  when: inventory_hostname == slurm_controller_host
+
+- name: Restart slurmd
+  become: true
+  ansible.builtin.service:
+    name: slurmd
+    state: restarted
+  when: inventory_hostname != slurm_controller_host or slurm_run_slurmd_on_controller

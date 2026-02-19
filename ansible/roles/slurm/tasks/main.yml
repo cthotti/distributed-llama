@@ -1,0 +1,173 @@
+---
+#Validates that slurm_inventory_group exists in the Ansible inventory
+#Ensure the slurm_inventory_group contains at least one host
+#Confirm slurm_controller_host is a member of slurm_inventory_group
+- name: Validate Slurm inventory settings
+  ansible.builtin.assert:
+    that:
+      - slurm_inventory_group in groups
+      - groups[slurm_inventory_group] | length > 0
+      - slurm_controller_host in groups[slurm_inventory_group]
+    fail_msg: "Set slurm_inventory_group and slurm_controller_host to valid inventory entries."
+  run_once: true
+
+#Refresh package metadata on apt-based nodes
+- name: Refresh apt package metadata
+  become: true
+  ansible.builtin.dnf:
+    update_cache: true
+  when: ansible_facts.pkg_mgr == "dnf"
+
+#Refresh package metadata on dnf-based nodes
+- name: Refresh dnf package metadata
+  become: true
+  ansible.builtin.dnf:
+    update_cache: true
+  when: ansible_facts.pkg_mgr in ["dnf", "dnf5"]
+
+#Install common Slurm + Munge packages on all nodes (controller + compute)
+- name: Install Slurm + Munge packages on all nodes
+  become: true
+  ansible.builtin.package:
+    name: "{{ slurm_common_packages }}"
+    state: present
+
+#Install controller-only Slurm packages listed in slurm_controller_packages
+#Run this task only on the controller host (rock0)
+- name: Install Slurm controller packages
+  become: true
+  ansible.builtin.package:
+    name: "{{ slurm_controller_packages }}"
+    state: present
+  when: inventory_hostname == slurm_controller_host
+
+#Creates the parent directory that will contain slurm.conf
+#slurm.conf passes main variables to slurm
+#Set directory ownership to root:root with 0755 permissions
+- name: Ensure Slurm configuration directory exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ slurm_conf_path | dirname }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+#Create the Slurm state save directory on the controller
+#Set ownership to the Slurm service user so slurmctld can write state
+#Run this task only on the controller host
+- name: Ensure Slurm state directory exists on controller
+  become: true
+  ansible.builtin.file:
+    path: "{{ slurm_state_save_location }}"
+    state: directory
+    owner: "{{ slurm_user }}"
+    group: "{{ slurm_user }}"
+    mode: "0755"
+  when: inventory_hostname == slurm_controller_host
+
+#Create runtime directories needed by slurmd and Slurm logging
+#Ensure spool and log directories exist with slurm_user ownership and 0755 perms
+#Loop over slurm_slurmd_spool_dir and slurm_log_dir
+- name: Ensure Slurm runtime directories exist
+  become: true
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: "{{ slurm_slurmd_spool_dir }}", owner: "{{ slurm_user }}", group: "{{ slurm_user }}", mode: "0755" }
+    - { path: "{{ slurm_log_dir }}", owner: "{{ slurm_user }}", group: "{{ slurm_user }}", mode: "0755" }
+
+#Create /etc/munge if it does not exist
+#Lock down permissions to 0700 and set ownership to munge:munge
+- name: Ensure Munge config directory exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/munge
+    state: directory
+    owner: munge
+    group: munge
+    mode: "0700"
+
+#Generate a Munge key on the controller if it does not already exist
+#Run create-munge-key only once and only on the controller (via delegate_to)
+- name: Ensure Munge key exists on controller
+  become: true
+  ansible.builtin.command: /usr/sbin/create-munge-key
+  args:
+    creates: "{{ slurm_munge_key_path }}"
+  delegate_to: "{{ slurm_controller_host }}"
+  run_once: true
+
+#Read the Munge key file from the controller into an Ansible variable
+#Store the base64-encoded key content in slurm_munge_key_from_controller
+#Hide key material from logs
+- name: Read Munge key from controller
+  become: true
+  ansible.builtin.slurp:
+    src: "{{ slurm_munge_key_path }}"
+  delegate_to: "{{ slurm_controller_host }}"
+  register: slurm_munge_key_from_controller
+  no_log: true
+
+#Copy the controller's Munge key to every node so authentication matches
+#Write the key with munge:munge ownership and 0400 permissions
+#Restart munge if the key file changes
+- name: Install shared Munge key on all nodes
+  become: true
+  ansible.builtin.copy:
+    dest: "{{ slurm_munge_key_path }}"
+    content: "{{ slurm_munge_key_from_controller.content | b64decode }}"
+    owner: munge
+    group: munge
+    mode: "0400"
+  no_log: true
+  notify: Restart munge
+
+#Render slurm.conf from the slurm.conf.j2 template
+#Write the config to slurm_conf_path as root:root with 0644 permissions
+#Restart slurmctld and slurmd if the config changes
+- name: Render slurm.conf
+  become: true
+  ansible.builtin.template:
+    src: slurm.conf.j2
+    dest: "{{ slurm_conf_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Restart slurmctld
+    - Restart slurmd
+
+#Start the munge service
+#Enable munge to start automatically on boot
+- name: Ensure Munge service is enabled and running
+  become: true
+  ansible.builtin.service:
+    name: munge
+    state: started
+    enabled: true
+
+#Start and enable slurmd on compute nodes
+#Optionally run slurmd on the controller if slurm_run_slurmd_on_controller is true
+#Otherwise, stop and disable slurmd on the controller
+- name: Ensure slurmd service state
+  become: true
+  ansible.builtin.service:
+    name: slurmd
+    state: "{{ 'started' if (inventory_hostname != slurm_controller_host or slurm_run_slurmd_on_controller) else 'stopped' }}"
+    enabled: "{{ inventory_hostname != slurm_controller_host or slurm_run_slurmd_on_controller }}"
+
+#Start the slurmctld controller daemon
+#Enable slurmctld to start automatically on boot
+#Run this task only on the controller host
+- name: Ensure slurmctld service is enabled and running on controller
+  become: true
+  ansible.builtin.service:
+    name: slurmctld
+    state: started
+    enabled: true
+  when: inventory_hostname == slurm_controller_host

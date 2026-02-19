@@ -1,0 +1,7 @@
+# Managed by Ansible (role: vulkan)
+{% if vulkan_override_icd_filenames | length > 0 %}
+export VK_ICD_FILENAMES="{{ vulkan_override_icd_filenames }}"
+{% endif %}
+{% if vulkan_layer_path | length > 0 %}
+export VK_LAYER_PATH="{{ vulkan_layer_path }}"
+{% endif %}
