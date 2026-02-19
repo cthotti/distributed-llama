@@ -1,13 +1,4 @@
 ---
-- name: Install required packages
-  ansible.builtin.dnf:
-    name:
-      - git
-      - build-essential
-      - python3
-    state: present
-    update_cache: yes
-
 - name: Create /opt/dllama directory
   ansible.builtin.file:
     path: "{{ dllama_root }}"

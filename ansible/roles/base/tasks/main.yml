@@ -35,12 +35,12 @@
     enabled: true
     state: restarted
 
-- name: Update dnf cache
-  ansible.builtin.dnf:
+- name: Update apt cache
+  ansible.builtin.apt:
     update_cache: true
 
 - name: Basic packages
-  ansible.builtin.dnf:
+  ansible.builtin.apt:
     name:
       - build-essential
       - vim

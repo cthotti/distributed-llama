@@ -4,7 +4,7 @@
 # -------------------------
 - name: Install common packages
   become: true
-  ansible.builtin.dnf:
+  ansible.builtin.apt:
     update_cache: true
     name: "{{ spack_apt_common }}"
     state: present
@@ -23,7 +23,7 @@
 # -------------------------
 - name: Install Spack build dependencies
   become: true
-  ansible.builtin.dnf:
+  ansible.builtin.apt:
     update_cache: true
     name: "{{ spack_apt_spack_build_host }}"
     state: present

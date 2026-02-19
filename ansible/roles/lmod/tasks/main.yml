@@ -1,6 +1,6 @@
 ---
 - name: Install Lmod packages
-  ansible.builtin.dnf:
+  ansible.builtin.apt:
     name: lmod
     state: present
     update_cache: true

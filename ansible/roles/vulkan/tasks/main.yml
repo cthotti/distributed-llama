@@ -1,15 +1,15 @@
 ---
-# Refresh dnf metadata so package install uses current repository indexes
-# Ansible dnf module handles cache update idempotently
-- name: Refresh dnf package metadata
-  ansible.builtin.dnf:
+# Refresh apt metadata so package install uses current repository indexes
+# Ansible apt module handles cache update idempotently
+- name: Refresh apt package metadata
+  ansible.builtin.apt:
     update_cache: true
   when:
     - vulkan_update_cache
 
 # Install Vulkan user-space runtime + Mesa Vulkan driver packages
 - name: Install Vulkan runtime and driver packages
-  ansible.builtin.dnf:
+  ansible.builtin.apt:
     name: "{{ vulkan_packages }}"
     state: present
 

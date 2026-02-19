@@ -1,6 +1,6 @@
 ---
 vulkan_packages:
-  - vulkan-loader
+  - libvulkan1
   - mesa-vulkan-drivers
   - vulkan-tools
 

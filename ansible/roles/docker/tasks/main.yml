@@ -26,12 +26,12 @@
       Signed-By: /etc/apt/keyrings/docker.asc
     mode: "0644"
 
-- name: Update dnf cache after adding Docker repo
-  ansible.builtin.dnf:
+- name: Update apt cache after adding Docker repo
+  ansible.builtin.apt:
     update_cache: true
 
 - name: Install Docker packages
-  ansible.builtin.dnf:
+  ansible.builtin.apt:
     name:
       - docker-ce
       - docker-ce-cli
