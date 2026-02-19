@@ -1,8 +1,9 @@
 ---
-# List of users to configure dllama for on each node.
-# Each user will get linger enabled and a systemd user service template installed.
+# Port per user
 dllama_users:
-  - "{{ ansible_user | default('pi') }}"
+  - { username: young, port: 9100 }
+  - { username: yuting, port: 9101 }
+  - { username: chet, port: 9102 }
 
 # Whether to install build dependencies via apt.
 dllama_install_build_deps: true
@@ -15,14 +16,7 @@ dllama_build_packages:
   - cmake
   - pkg-config
 
-# Enable loginctl linger so user services start at boot without a login session.
 dllama_enable_linger: true
-
-# Name of the systemd user service template unit.
 dllama_service_name: "dllama-worker@.service"
-
-# Relative path (under $HOME) for the systemd user unit directory.
 dllama_user_systemd_dir: ".config/systemd/user"
-
-# Directory name of the dllama repo clone inside the user's home.
 dllama_repo_dir_name: "distributed-llama"

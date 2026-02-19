@@ -12,8 +12,8 @@
 # ── B) Enable linger for each user ──────────────────────────────────────────
 - name: Enable loginctl linger for dllama users
   ansible.builtin.command:
-    cmd: "loginctl enable-linger {{ item }}"
-    creates: "/var/lib/systemd/linger/{{ item }}"
+    cmd: "loginctl enable-linger {{ item.username }}"
+    creates: "/var/lib/systemd/linger/{{ item.username }}"
   loop: "{{ dllama_users }}"
   become: true
   when: dllama_enable_linger
@@ -21,10 +21,10 @@
 # ── C) Ensure systemd user directory exists for each user ────────────────────
 - name: Create systemd user unit directory for dllama users
   ansible.builtin.file:
-    path: "/home/{{ item }}/{{ dllama_user_systemd_dir }}"
+    path: "/home/{{ item.username }}/{{ dllama_user_systemd_dir }}"
     state: directory
-    owner: "{{ item }}"
-    group: "{{ item }}"
+    owner: "{{ item.username }}"
+    group: "{{ item.username }}"
     mode: "0755"
   loop: "{{ dllama_users }}"
   become: true
@@ -33,10 +33,32 @@
 - name: Install dllama-worker@ systemd user service template
   ansible.builtin.template:
     src: "dllama-worker@.service.j2"
-    dest: "/home/{{ item }}/{{ dllama_user_systemd_dir }}/{{ dllama_service_name }}"
-    owner: "{{ item }}"
-    group: "{{ item }}"
+    dest: "/home/{{ item.username }}/{{ dllama_user_systemd_dir }}/{{ dllama_service_name }}"
+    owner: "{{ item.username }}"
+    group: "{{ item.username }}"
     mode: "0644"
+  loop: "{{ dllama_users }}"
+  become: true
+
+# ── E) Ensure default.target.wants directory exists ─────────────────────────
+- name: Create default.target.wants directory for dllama users
+  ansible.builtin.file:
+    path: "/home/{{ item.username }}/{{ dllama_user_systemd_dir }}/default.target.wants"
+    state: directory
+    owner: "{{ item.username }}"
+    group: "{{ item.username }}"
+    mode: "0755"
+  loop: "{{ dllama_users }}"
+  become: true
+
+# ── F) Enable dllama-worker on the assigned port for each user ──────────────
+- name: Enable dllama-worker on assigned port for each user
+  ansible.builtin.file:
+    src: "/home/{{ item.username }}/{{ dllama_user_systemd_dir }}/{{ dllama_service_name }}"
+    dest: "/home/{{ item.username }}/{{ dllama_user_systemd_dir }}/default.target.wants/dllama-worker@{{ item.port }}.service"
+    state: link
+    owner: "{{ item.username }}"
+    group: "{{ item.username }}"
   loop: "{{ dllama_users }}"
   become: true
 
