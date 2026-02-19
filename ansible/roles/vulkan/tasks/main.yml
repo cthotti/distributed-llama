@@ -1,26 +1,4 @@
 ---
-# Check package manager and CPU architecture before doing Vulkan setup
-# If host is not ARM + supported package manager, stop role early with a clear failure
-# Ansible assert evaluates facts and fails the play when conditions are false
-- name: Validate target is ARM with supported package manager
-  ansible.builtin.assert:
-    that:
-      - ansible_facts.pkg_mgr in vulkan_supported_pkg_managers
-      - ansible_architecture in vulkan_supported_architectures
-    fail_msg: >-
-      The vulkan role currently supports ARM hosts that use apt or dnf.
-      Found pkg_mgr={{ ansible_facts.pkg_mgr }}, architecture={{ ansible_architecture }}.
-
-# Refresh apt metadata so package install uses current repository indexes
-# Ansible apt module handles cache update idempotently
-- name: Refresh apt package metadata
-  ansible.builtin.apt:
-    update_cache: true
-    cache_valid_time: "{{ vulkan_apt_cache_valid_time }}"
-  when:
-    - vulkan_update_cache
-    - ansible_facts.pkg_mgr == "apt"
-
 # Refresh dnf metadata so package install uses current repository indexes
 # Ansible dnf module handles cache update idempotently
 - name: Refresh dnf package metadata
@@ -28,56 +6,12 @@
     update_cache: true
   when:
     - vulkan_update_cache
-    - ansible_facts.pkg_mgr in ["dnf", "dnf5"]
 
 # Install Vulkan user-space runtime + Mesa Vulkan driver packages
-# Ansible package module picks apt or dnf based on the host package manager
 - name: Install Vulkan runtime and driver packages
-  ansible.builtin.package:
-    name: "{{ vulkan_packages_apt if ansible_facts.pkg_mgr == 'apt' else vulkan_packages_dnf }}"
+  ansible.builtin.dnf:
+    name: "{{ vulkan_packages }}"
     state: present
-
-# Create system groups that commonly gate GPU device access (/dev/dri/*)
-# Ansible group module creates groups only if missing
-- name: Ensure Vulkan GPU access groups exist
-  ansible.builtin.group:
-    name: "{{ item }}"
-    state: present
-  loop: "{{ vulkan_gpu_access_groups }}"
-
-# Normalize vulkan_gpu_users so loop always receives a list
-# Accept list values, YAML/JSON list strings, or comma-separated strings
-- name: Normalize Vulkan GPU users list
-  ansible.builtin.set_fact:
-    vulkan_gpu_users_list: >-
-      {{
-        vulkan_gpu_users
-        if (vulkan_gpu_users is sequence and vulkan_gpu_users is not string)
-        else (
-          (vulkan_gpu_users | from_yaml)
-          if (
-            vulkan_gpu_users is string
-            and (vulkan_gpu_users | trim | regex_search('^\\[.*\\]$'))
-          )
-          else (
-            vulkan_gpu_users
-            | split(',')
-            | map('trim')
-            | reject('equalto', '')
-            | list
-          )
-        )
-      }}
-
-# For each configured user, append render/video groups without removing existing groups
-# Ansible user module updates membership only when needed
-- name: Add configured users to Vulkan GPU access groups
-  ansible.builtin.user:
-    name: "{{ item }}"
-    groups: "{{ vulkan_gpu_access_groups | join(',') }}"
-    append: true
-  loop: "{{ vulkan_gpu_users_list }}"
-  when: vulkan_gpu_users_list | length > 0
 
 # Look for Vulkan ICD JSON files in /usr/share/vulkan/icd.d
 # Ansible find scans the directory and stores results in vulkan_icd_files
@@ -107,11 +41,3 @@
     owner: root
     group: root
     mode: "0644"
-
-# Optional smoke test: run "vulkaninfo --summary" to verify Vulkan userspace sees a driver
-# Ansible command executes read-only check and marks task unchanged
-- name: Run Vulkan smoke test
-  ansible.builtin.command: vulkaninfo --summary
-  register: vulkan_smoke_test
-  changed_when: false
-  when: vulkan_run_smoke_test
