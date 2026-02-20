@@ -27,7 +27,7 @@
     block: |
       {{ nfs_spack_backing_dir }} {{ nfs_export_subnet }}({{ nfs_export_options_ro }},fsid=10)
       {{ nfs_modulefiles_backing_dir }} {{ nfs_export_subnet }}({{ nfs_export_options_ro }},fsid=11)
-      {{ nfs_apps_backing_dir }} {{ nfs_export_subnet }}({{ nfs_export_options_ro }},fsid=12)
+      {{ nfs_apps_backing_dir }} {{ nfs_export_subnet }}({{ nfs_export_options_rw }},fsid=12)
   notify: Reload NFS exports
   when: inventory_hostname == nfs_host_name
 
@@ -72,15 +72,18 @@
     path: "{{ item.path }}"
     src: "{{ nfs_host_name }}:{{ item.src }}"
     fstype: nfs4
-    opts: "{{ nfs_mount_opts }}"
+    opts: "{{ item.opts }}"
     state: mounted
   loop:
     - path: "{{ nfs_spack_prefix }}"
       src: "{{ nfs_spack_backing_dir }}"
+      opts: "{{ nfs_mount_opts_ro }}"
     - path: "{{ nfs_modulefiles_dir }}"
       src: "{{ nfs_modulefiles_backing_dir }}"
+      opts: "{{ nfs_mount_opts_ro }}"
     - path: "{{ nfs_apps_dir }}"
       src: "{{ nfs_apps_backing_dir }}"
+      opts: "{{ nfs_mount_opts_rw }}"
   when: inventory_hostname != nfs_host_name
 
 - name: Update /apps permissions
