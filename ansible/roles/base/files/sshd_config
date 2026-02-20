@@ -11,4 +11,4 @@ AllowTcpForwarding yes
 X11Forwarding yes
 PrintMotd no
 AcceptEnv LANG LC_* COLORTERM
-Subsystem sftp /usr/libexec/openssh/sftp-server
+Subsystem sftp /usr/lib/openssh/sftp-server
