@@ -53,6 +53,7 @@
       - python3
       - nfs-common
       - network-manager
+      - linux-perf
     state: present
 
 - name: Enable and start NetworkManager

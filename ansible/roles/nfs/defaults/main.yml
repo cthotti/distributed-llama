@@ -14,9 +14,11 @@ nfs_apps_dir: /apps
 # Network/export policy
 nfs_export_subnet: "192.168.111.0/24"
 nfs_export_options_ro: "ro,sync,no_subtree_check"
+nfs_export_options_rw: "rw,sync,no_subtree_check"
 
 # Client mount options
-nfs_mount_opts: "ro,vers=4.1,proto=tcp,_netdev,x-systemd.automount,x-systemd.requires=network-online.target,x-systemd.after=network-online.target"
+nfs_mount_opts_ro: "ro,vers=4.1,proto=tcp,_netdev,x-systemd.automount,x-systemd.requires=network-online.target,x-systemd.after=network-online.target"
+nfs_mount_opts_rw: "rw,vers=4.1,proto=tcp,_netdev,x-systemd.automount,x-systemd.requires=network-online.target,x-systemd.after=network-online.target"
 
 # Packages
 nfs_server_packages:
