@@ -13,3 +13,4 @@
     - slurm
     - vulkan
     - spack
+    - dllama

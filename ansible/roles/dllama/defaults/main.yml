@@ -1,3 +1,22 @@
 ---
-dllama_root: /opt/dllama
-dllama_src: /opt/dllama/src
+# Port per user
+dllama_users:
+  - { username: young, port: 9100 }
+  - { username: yuting, port: 9101 }
+  - { username: chet, port: 9102 }
+
+# Whether to install build dependencies via apt.
+dllama_install_build_deps: true
+
+# Apt packages required to build/run dllama from source.
+dllama_build_packages:
+  - git
+  - build-essential
+  - make
+  - cmake
+  - pkg-config
+
+dllama_enable_linger: true
+dllama_service_name: "dllama-worker@.service"
+dllama_user_systemd_dir: ".config/systemd/user"
+dllama_repo_dir_name: "distributed-llama"
