@@ -5,11 +5,11 @@
   vars:
     ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
   roles:
-    # - base
+    - base
     # - docker
     # - users
     # - lmod
     # - nfs
     # - slurm
-    - vulkan
+    # - vulkan
     # - spack
