@@ -151,6 +151,12 @@
             projections:
               all: '{name}/{version}'
             hash_length: 0
+            openmpi:
+              environment:
+                set:
+                  OMPI_MCA_btl_tcp_if_include: "enP4p65s0"
+                  OMPI_MCA_oob_tcp_if_include: "enP4p65s0"
+
   when: inventory_hostname == spack_host_name
 
 - name: Spack compiler find
