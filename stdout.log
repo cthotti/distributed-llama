@@ -1,0 +1,96 @@
+📄 AddBos: 255
+📄 BosId: 128000 (<｜begin▁of▁sentence｜>)
+📄 EosId: 128001 (<｜end▁of▁sentence｜>) 128001 (<｜end▁of▁sentence｜>) 
+📄 RegularVocabSize: 128000
+📄 SpecialVocabSize: 256
+💡 Arch: Llama
+💡 HiddenAct: Silu
+💡 Dim: 4096
+💡 HeadDim: 128
+💡 QDim: 4096
+💡 KvDim: 1024
+💡 HiddenDim: 14336
+💡 VocabSize: 128256
+💡 nLayers: 32
+💡 nHeads: 32
+💡 nKvHeads: 8
+💡 OrigSeqLen: 131072
+💡 SeqLen: 4096
+💡 NormEpsilon: 0.000010
+💡 RopeType: Llama3.1
+💡 RopeTheta: 500000
+💡 RopeScaling: f=8.0, l=1.0, h=4.0, o=8192
+📀 RequiredMemory: 3312 MB
+⭕ Socket[0]: connecting to 192.168.111.54:9999 worker
+⭕ Socket[0]: connected
+⭕ Socket[1]: connecting to 192.168.111.52:9999 worker
+⭕ Socket[1]: connected
+⭕ Socket[2]: connecting to 192.168.111.53:9999 worker
+⭕ Socket[2]: connected
+⭕ Network is initialized
+🧠 CPU: neon fp16
+💿 Loading weights...
+💿 Loaded 12/32
+💿 Loaded 13/32
+💿 Loaded 14/32
+💿 Loaded 15/32
+💿 Loaded 16/32
+💿 Loaded 17/32
+💿 Loaded 18/32
+💿 Loaded 19/32
+💿 Loaded 20/32
+💿 Loaded 21/32
+💿 Loaded 22/32
+💿 Loaded 23/32
+💿 Loaded 24/32
+💿 Loaded 25/32
+💿 Loaded 26/32
+💿 Loaded 27/32
+💿 Loaded 28/32
+💿 Loaded 29/32
+💿 Loaded 30/32
+💿 Loaded 31/32
+💿 Loaded 32/32
+💿 Weights loaded
+🚁 Network is in non-blocking mode
+Hello world
+🔷️ [10:51:29.245] Eval   718 ms Sync  2772 ms | Wall  3491 ms | Core  6 | Mem 9396744 KB | Workers 3 | Sent   1728 kB Recv   2383 kB | (2 tokens) ⚠️  SYNC SPIKE
+🔶 [10:51:29.611] Pred  354 ms Sync    9 ms | Wall  365 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB | !
+🔶 [10:51:29.983] Pred    0 ms Sync    6 ms | Wall  372 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  I
+🔶 [10:51:30.343] Pred4294966 ms Sync4294955 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB | 'm ⚠️ SYNC SPIKE
+🔶 [10:51:30.703] Pred    0 ms Sync4294967 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  trying ⚠️ SYNC SPIKE
+🔶 [10:51:31.063] Pred4294967 ms Sync4294967 ms | Wall  359 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  to ⚠️ SYNC SPIKE
+🔶 [10:51:31.423] Pred    0 ms Sync    0 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  make
+🔶 [10:51:31.783] Pred4294966 ms Sync4294967 ms | Wall  359 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  a ⚠️ SYNC SPIKE
+🔶 [10:51:32.143] Pred    0 ms Sync4294967 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  simple ⚠️ SYNC SPIKE
+🔶 [10:51:32.503] Pred    0 ms Sync    0 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  Python
+🔶 [10:51:32.864] Pred    0 ms Sync4294967 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  script ⚠️ SYNC SPIKE
+🔶 [10:51:33.224] Pred4294967 ms Sync    0 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  that
+🔶 [10:51:33.585] Pred4294966 ms Sync    1 ms | Wall  361 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  can
+🔶 [10:51:33.945] Pred    0 ms Sync4294965 ms | Wall  359 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  add ⚠️ SYNC SPIKE
+🔶 [10:51:34.312] Pred    0 ms Sync    5 ms | Wall  366 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  two
+🔶 [10:51:34.672] Pred4294966 ms Sync4294961 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  numbers ⚠️ SYNC SPIKE
+🔶 [10:51:35.032] Pred    0 ms Sync4294967 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB | . ⚠️ SYNC SPIKE
+🔶 [10:51:35.392] Pred    0 ms Sync    0 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  But
+🔶 [10:51:35.752] Pred    0 ms Sync4294967 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  I ⚠️ SYNC SPIKE
+🔶 [10:51:36.112] Pred4294967 ms Sync4294967 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB | 'm ⚠️ SYNC SPIKE
+🔶 [10:51:36.473] Pred    0 ms Sync    0 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  stuck
+🔶 [10:51:36.833] Pred4294967 ms Sync4294967 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  because ⚠️ SYNC SPIKE
+🔶 [10:51:37.193] Pred    0 ms Sync    0 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  I
+🔶 [10:51:40.812] Pred4294966 ms Sync 3258 ms | Wall 3618 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  don ⚠️ SYNC SPIKE
+🔶 [10:51:41.173] Pred    0 ms Sync4291710 ms | Wall  361 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB | 't ⚠️ SYNC SPIKE
+🔶 [10:51:41.534] Pred    0 ms Sync4294966 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  know ⚠️ SYNC SPIKE
+🔶 [10:51:41.894] Pred    0 ms Sync4294967 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  how ⚠️ SYNC SPIKE
+🔶 [10:51:42.254] Pred4294967 ms Sync4294967 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  to ⚠️ SYNC SPIKE
+🔶 [10:51:42.614] Pred    0 ms Sync4294967 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  handle ⚠️ SYNC SPIKE
+🔶 [10:51:42.975] Pred4294967 ms Sync    0 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  the
+🔶 [10:51:43.335] Pred    0 ms Sync4294967 ms | Wall  360 ms | Core  6 | Mem9396744 KB | Workers 3 | Sent   864 kB Recv  1191 kB |  input ⚠️ SYNC SPIKE
+
+Evaluation
+   nBatches: 32
+    nTokens: 2
+   tokens/s: 0.57 (1745.61 ms/tok)
+Prediction
+    nTokens: 30
+   tokens/s: 2.13 (468.41 ms/tok)
+⭕ Network is closed
